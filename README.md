@@ -164,7 +164,6 @@ This prevents blocking during active conversations.
 
 ---
 
-````markdown
 ## Architecture Diagram
 
 ```mermaid
