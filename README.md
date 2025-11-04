@@ -99,12 +99,13 @@ After the host approves your request, you can begin chatting.
 ## File Structure
 
 ```
-PyLAN-Messenger/
+PyLAN/
 ├── client.py             # Client logic and message sender
 ├── server.py             # Host listener and message handler
 ├── crypto_utils.py       # Encryption and key management
 ├── requirements.txt      # Dependencies
-└── README.md             # Project documentation
+README.md             # Project documentation
+LICENSE               # MIT LICENSE
 ```
 
 ---
