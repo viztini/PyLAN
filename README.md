@@ -164,6 +164,74 @@ This prevents blocking during active conversations.
 
 ---
 
+````markdown
+## Architecture Diagram
+
+```mermaid
+flowchart LR
+    subgraph Host["Host (Server Mode)"]
+        H1[server.py<br>Listens for incoming requests]
+        H2[crypto_utils.py<br>Handles encryption/decryption]
+        H3[Console Thread<br>Reads and sends messages]
+    end
+
+    subgraph Client["Client (Client Mode)"]
+        C1[client.py<br>Connects to host over TCP]
+        C2[crypto_utils.py<br>Encrypts outgoing data]
+        C3[Console Thread<br>Reads user input]
+    end
+
+    subgraph Network["LAN Network"]
+        N1[TCP Socket<br>(Default Port 5000)]
+    end
+
+    C1 -- "Connect request" --> N1
+    N1 -- "Connection pending" --> H1
+    H1 -- "User approves connection" --> H1
+    H1 -- "Session key established" --> C1
+
+    C2 -- "Encrypted message" --> N1
+    N1 -- "Encrypted message" --> H2
+
+    H2 -- "Decrypt & display" --> H3
+    H3 -- "Encrypted reply" --> H2
+    H2 -- "Reply sent" --> N1
+    N1 -- "Reply received" --> C2
+````
+
+---
+
+## Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Host
+    participant Network
+
+    Client->>Host: Request connection (TCP)
+    Host->>User: Prompt for approval
+    User-->>Host: Approve connection
+    Host->>Client: Connection accepted + encryption key shared
+    Client->>Host: Send encrypted message
+    Host->>Client: Send encrypted reply
+    Note over Client,Host: Messages flow simultaneously via threads
+```
+
+---
+
+## Explanation
+
+* The **client** initiates a TCP connection to the **host’s IP or hostname**.
+* The **host** uses a local listener (server socket) to accept incoming requests.
+* When a connection arrives, the host manually **approves or denies** it.
+* Upon approval, a **session key** (Fernet AES) is generated and shared.
+* Both sides launch **threads** for concurrent send/receive loops.
+* Messages are **encrypted and decrypted** with `crypto_utils.py`.
+* Data flows only within the **LAN** — there’s no internet routing or remote server.
+
+---
+
 ## Future Improvements
 
 * Add Diffie-Hellman key exchange
