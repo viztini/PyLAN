@@ -1,4 +1,3 @@
-````markdown
 # PyLAN Messenger
 
 A lightweight peer-to-peer LAN messaging application written entirely in Python.  
